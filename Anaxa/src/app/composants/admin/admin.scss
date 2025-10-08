@@ -1,4 +1,1 @@
-.admin-page { padding: 20px; }
-.product-row { display:flex; gap: 10px; align-items:center; padding:8px 0; border-bottom:1px solid #eee; }
-.product-row .title { flex:1 }
-.product-row .price { width:100px }
+.admin-page{padding:20px}.product-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}.actions button{background:#e74c3c;color:#fff;border:none;padding:6px 10px;border-radius:4px}

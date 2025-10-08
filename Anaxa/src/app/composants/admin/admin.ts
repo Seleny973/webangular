@@ -1,35 +1,41 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ProductService } from '../../services/product-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './admin.html',
   styleUrls: ['./admin.scss']
 })
 export class Admin {
   products: any[] = [];
-  loading = false;
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService, private router: Router){ }
 
   ngOnInit(){
-    this.load();
-  }
-
-  load(){
-    this.loading = true;
     this.productService.getProducts().subscribe({
-      next: (res: any) => { this.products = res; this.loading = false; },
-      error: () => { this.loading = false; }
-    });
+      next: (p: any) => {
+        this.products = p;
+      }, error: (e:any) => console.error(e)
+    })
   }
 
-  deleteProduct(id: number){
-    if (!confirm('Supprimer ce produit ?')) return;
-    this.productService.deleteProduct(id).subscribe({
-      next: () => { this.load(); },
-      error: (e) => { console.error('Erreur suppression', e); }
+  delete(product: any){
+    if (!product || !product.id) return;
+    if (!confirm('Supprimer le produit "' + product.title + '" ?')) return;
+    this.productService.deleteProductRemote(product.id).subscribe({
+      next: (res:any) => {
+        // remove locally from view
+        this.products = this.products.filter(x => x.id !== product.id);
+        // also remove from cart if present
+        this.productService.removeFromCart(product.id);
+      },
+      error: (err:any) => {
+        console.error('Erreur suppression', err);
+        alert('Impossible de supprimer le produit sur le remote');
+      }
     });
   }
 }
