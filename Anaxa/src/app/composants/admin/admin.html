@@ -1,0 +1,13 @@
+<div class="admin-page">
+  <h1>Admin - Gestion des produits</h1>
+  <div *ngIf="loading">Chargement...</div>
+  <div class="product-list">
+    @for(prod of products; track $index){
+      <div class="product-row">
+        <div class="title">{{prod.title}}</div>
+        <div class="price">{{prod.price}}€</div>
+        <button (click)="deleteProduct(prod.id)">Supprimer</button>
+      </div>
+    }
+  </div>
+</div>

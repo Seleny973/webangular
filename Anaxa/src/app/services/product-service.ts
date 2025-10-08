@@ -28,6 +28,10 @@ export class ProductService {
     return this.http.get('https://fakestoreapi.com/products');
   }
 
+  deleteProduct(productId: number) {
+    return this.http.delete(`https://fakestoreapi.com/products/${productId}`);
+  }
+
   addToCart(product: any){
     this.cart.push(product);
     if (typeof window !== 'undefined' && window.localStorage) {
