@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signin',
+  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './signin.html',
   styleUrls: ['./signin.scss']
