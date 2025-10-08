@@ -33,6 +33,21 @@ export class UserService {
     this.tokenSubject.next(token);
   }
 
+  getUser(): any {
+    if (typeof window === 'undefined' || !window.localStorage) return null;
+    try {
+      return JSON.parse(<string>localStorage.getItem('user')) || null;
+    } catch {
+      return null;
+    }
+  }
+
+  isAdmin(): boolean {
+    const u = this.getUser();
+    // convention: user object may contain isAdmin boolean
+    return !!(u && u.isAdmin === true);
+  }
+
   login(username: string, password: string) {
     return this.http.post('https://fakestoreapi.com/auth/login', { username, password });
   }
