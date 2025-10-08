@@ -7,11 +7,17 @@ import { inject, Injectable } from '@angular/core';
 export class ProductService {
   private http = inject(HttpClient);
 
-  public cart: any[] = [];
+  public cart: Array<{ product: any; quantity: number }> = [];
   constructor() {
     if (typeof window !== 'undefined' && window.localStorage) {
-      this.cart = JSON.parse(<string>localStorage.getItem('cart')) || [];
-      if(!this.cart){
+      const raw = JSON.parse(<string>localStorage.getItem('cart')) || [];
+      // normalize stored cart to expected shape
+      this.cart = raw.map((item: any) => {
+        if (item && item.product && typeof item.quantity === 'number') return item;
+        // legacy format: stored as array of products
+        return { product: item, quantity: 1 };
+      });
+      if (!this.cart) {
         localStorage.setItem('cart', JSON.stringify([]));
         this.cart = [];
       }
@@ -22,18 +28,52 @@ export class ProductService {
     console.log(this.cart);
   }
 
-
-
   getProducts() {
     return this.http.get('https://fakestoreapi.com/products');
   }
 
-  addToCart(product: any){
-    this.cart.push(product);
+  deleteProductRemote(productId: number){
+    // Call the fake store API to delete product (if allowed)
+    return this.http.delete(`https://fakestoreapi.com/products/${productId}`);
+  }
+
+  addToCart(product: any, quantity = 1){
+    const existing = this.cart.find(c => c.product && c.product.id === product.id);
+    if (existing) {
+      existing.quantity += quantity;
+    } else {
+      this.cart.push({ product, quantity });
+    }
+    this.persist();
+    console.log(this.cart);
+    return this.cart;
+  }
+
+  updateQuantity(productId: number, quantity: number){
+    const idx = this.cart.findIndex(c => c.product && c.product.id === productId);
+    if (idx === -1) return this.cart;
+    if (quantity <= 0) {
+      this.cart.splice(idx, 1);
+    } else {
+      this.cart[idx].quantity = quantity;
+    }
+    this.persist();
+    return this.cart;
+  }
+
+  removeFromCart(productId: number){
+    this.cart = this.cart.filter(c => !(c.product && c.product.id === productId));
+    this.persist();
+    return this.cart;
+  }
+
+  getTotal(){
+    return this.cart.reduce((sum, item) => sum + (item.product.price || 0) * item.quantity, 0);
+  }
+
+  private persist(){
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.setItem('cart', JSON.stringify(this.cart));
     }
-    console.log(this.cart);
-    return this.cart;
   }
 }

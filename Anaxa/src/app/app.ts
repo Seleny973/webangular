@@ -7,7 +7,7 @@ import { Homepage } from './composants/homepage/homepage';
   selector: 'app-root',
   imports: [RouterOutlet,Header,Homepage],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrls: ['./app.scss']
 })
 export class App {
   protected readonly title = signal('Anaxa');

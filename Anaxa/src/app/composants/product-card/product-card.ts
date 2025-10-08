@@ -4,7 +4,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   selector: 'app-product-card',
   imports: [],
   templateUrl: './product-card.html',
-  styleUrl: './product-card.scss'
+  styleUrls: ['./product-card.scss']
 })
 export class ProductCard {
   @Input() product: any; 
