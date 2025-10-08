@@ -8,7 +8,7 @@ import { UserService } from '../../services/user-service';
     imports: [CommonModule, ReactiveFormsModule],
   standalone: true,
   templateUrl: './login.html',
-  styleUrl: './login.scss'
+  styleUrls: ['./login.scss']
 })
 export class Login {
 
